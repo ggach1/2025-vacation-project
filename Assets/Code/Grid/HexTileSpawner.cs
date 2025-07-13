@@ -7,6 +7,8 @@ namespace Code.Grid
     /// </summary>
     public class HexTileSpawner : MonoBehaviour
     {
+        [SerializeField] Transform originField;
+
         [SerializeField] float radius = 0.5f;
         int _rows = 4;
         int _cols = 9;
@@ -26,7 +28,7 @@ namespace Code.Grid
                     float xPos = y * xStep + xOffset;
                     float zPos = x * zStep;
 
-                    Vector3 position = new Vector3(xPos, 0, zPos);
+                    Vector3 position = new Vector3(xPos, 0, zPos) + originField.position;
 
                     GameObject tile = new GameObject($"HexTile {x} {y}");
                     tile.transform.position = position;
