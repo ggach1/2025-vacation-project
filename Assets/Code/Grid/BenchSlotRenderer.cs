@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Code.Grid
 {
     [RequireComponent(typeof(LineRenderer))]
-    public class BenchSlotRenderer : MonoBehaviour
+    public class BenchSlotRenderer : MonoBehaviour, IRenderer
     {
         public void Initialize(float size)
         {

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Code.Grid
 {
@@ -6,21 +7,33 @@ namespace Code.Grid
     {
         [SerializeField] Transform originBench;
 
-        [SerializeField] int colums = 5;
-        [SerializeField] float slotSize = 1f;
+        [SerializeField] int columns = 10;
+        [SerializeField] float padding = 0.05f;
 
         private void Start()
         {
-            for (int i = 0; i < colums; i++)
+            BoxCollider collider = originBench.GetComponent<BoxCollider>();
+            Vector3 size = Vector3.Scale(collider.size, originBench.lossyScale);
+
+            float usableWidth = size.x;
+            float slotSize = (usableWidth - padding * (columns - 1)) / columns;
+
+            Vector3 start = originBench.position - new Vector3(usableWidth, 0, 0) * 0.5f;
+
+            for (int i = 0; i < columns; i++)
             {
-                Vector3 position = new Vector3(i * slotSize, 0, 0) + originBench.position;
+                float x = i * (slotSize + padding);
+                Vector3 worldPos = start + new Vector3(x + slotSize / 2f, 0.01f, 0);
 
-                GameObject slot = new GameObject($"BenchSlot {i}");
-                slot.transform.position = position;
-                slot.transform.SetParent(transform);
+                GameObject slotObj = new GameObject($"BenchSlot {i}");
+                slotObj.transform.position = worldPos;
+                slotObj.transform.SetParent(originBench);
 
-                var renderer = slot.AddComponent<BenchSlotRenderer>();
+                var renderer = slotObj.AddComponent<BenchSlotRenderer>();
                 renderer.Initialize(slotSize);
+
+                var col = slotObj.AddComponent<BoxCollider>();
+                col.size = new Vector3(slotSize, 0.1f, slotSize);
             }
         }
     }

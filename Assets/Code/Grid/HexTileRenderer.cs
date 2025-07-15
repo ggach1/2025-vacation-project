@@ -6,7 +6,7 @@ namespace Code.Grid
     /// 실제 Unity GameObj에 육각형 Mesh를 작용하는 컴포넌트
     /// </summary>
     [RequireComponent(typeof(LineRenderer))]
-    public class HexTileRenderer : MonoBehaviour
+    public class HexTileRenderer : MonoBehaviour, IRenderer
     {
         public void Initialize(float radius)
         {
@@ -17,7 +17,7 @@ namespace Code.Grid
             // 6개의 꼭짓점
             for (int i = 0; i < 6; i++)
             {
-                float angleDeg = 60 * i - 30; // flat-top 육강형 기준 시작 각도: -30도
+                float angleDeg = 60 * i - 30; // flat-top 육각형 기준 시작 각도: -30도
                 float angleRad = Mathf.Deg2Rad * angleDeg;
 
                 float x = Mathf.Cos(angleRad) * radius;
