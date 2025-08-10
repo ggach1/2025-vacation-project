@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace Code.Astar
 {
-    public class AstarPathFinder
+    public class AstarPathFinder : IPathFinder
     {
-        static readonly Vector3Int[] Directions = new[]
+        static readonly Vector3Int[] Directions =
         {
             new Vector3Int(1, -1, 0),
             new Vector3Int(1, 0, -1),
@@ -31,7 +31,6 @@ namespace Code.Astar
             while (open.Count > 0)
             {
                 var current = open.Dequeue();
-
                 if (current == goalTile)
                     return ReconstructPath(cameFrom, current);
 
@@ -39,18 +38,17 @@ namespace Code.Astar
                 {
                     var neighborCoord = current.CubeCoord + dir;
                     var neighbor = HexGridManager.Instance.GetTileAt(neighborCoord);
-                    if (neighbor == null || !neighbor.IsWalkable) continue;
+                    if (neighbor == null || (!neighbor.IsWalkable && neighbor != goalTile))
+                        continue;
 
-                    int tentaiveG = gScore[current] + 1;
-                    if (!gScore.ContainsKey(neighbor) || tentaiveG < gScore[neighbor])
+                    int tentativeG = gScore[current] + 1;
+                    if (!gScore.ContainsKey(neighbor) || tentativeG < gScore[neighbor])
                     {
                         cameFrom[neighbor] = current;
-                        gScore[neighbor] = tentaiveG;
+                        gScore[neighbor] = tentativeG;
+                        int fScore = tentativeG + Heuristic(neighbor.CubeCoord, goal);
                         if (!open.Contains(neighbor))
-                        {
-                            int fScore = tentaiveG + Heuristic(neighbor.CubeCoord, goal);
                             open.Enqueue(neighbor, fScore);
-                        }
                     }
                 }
             }
@@ -65,7 +63,7 @@ namespace Code.Astar
 
         private List<HexTile> ReconstructPath(Dictionary<HexTile, HexTile> cameFrom, HexTile current)
         {
-            var path = new List<HexTile> { current};
+            var path = new List<HexTile> { current };
             while (cameFrom.ContainsKey(current))
             {
                 current = cameFrom[current];

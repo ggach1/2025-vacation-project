@@ -2,16 +2,16 @@ using UnityEngine;
 
 namespace Code.Grid
 {
-    /// <summary>
-    /// 테스트 용
-    /// </summary>
     public class HexTileSpawner : MonoBehaviour
     {
         [SerializeField] Transform originField;
 
-        [SerializeField] Vector2 fieldSize = new Vector2(8f, 6f);
+        [Header("grid Layout")]
         int _rows = 4;
         int _cols = 9;
+
+        [Header("tile setting")]
+        [SerializeField] float padding = 0.95f;
 
         private void Start()
         {
@@ -23,6 +23,8 @@ namespace Code.Grid
             float maxRadiusByHeight = (fieldSize.y / _rows) / 1.5f;
 
             float radius = Mathf.Min(maxRadiusByWidth, maxRadiusByHeight) * 0.95f;
+
+            HexGridManager.Instance.SetRadius(radius);
 
             float xStep = radius * Mathf.Sqrt(3f);
             float zStep = radius * 1.5f;
