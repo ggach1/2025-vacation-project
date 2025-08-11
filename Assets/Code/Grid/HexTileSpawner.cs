@@ -31,7 +31,7 @@ namespace Code.Grid
 
             float totalWidth = (_cols - 1) * xStep + xStep;
             if (_rows > 1)
-                totalWidth += xStep / 2f; // 오른쪽 오프셋을 고려해서 해주어야 밖으로 안 삐져나감
+                totalWidth += xStep / 2f; // 오른쪽 오프셋 고려해야해
 
             float totalHeight = (_rows - 1) * zStep + zStep;
 
@@ -51,6 +51,13 @@ namespace Code.Grid
                     GameObject tileObj = new GameObject($"HexTile {row} {col}");
                     tileObj.transform.position = position;
                     tileObj.transform.SetParent(originField);
+
+                    // Tile 레이어 자동 설정
+                    tileObj.layer = LayerMask.NameToLayer("Tile");
+
+                    // 콜라이더 추가
+                    var box = tileObj.AddComponent<BoxCollider>();
+                    box.size = new Vector3(radius * 2f, 0.1f, radius * 2f);
 
                     var renderer = tileObj.AddComponent<HexTileRenderer>();
                     renderer.Initialize(radius);
@@ -75,4 +82,3 @@ namespace Code.Grid
         }
     }
 }
-
