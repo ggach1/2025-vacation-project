@@ -1,3 +1,4 @@
+using Code.Astar;
 using Code.Grid;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,22 +9,45 @@ namespace Code.Entities.Units
     public class UnitMover : MonoBehaviour
     {
         [SerializeField] float moveSpeed = 2f;
-        IPathFinder pathFinder;
-        IPathVisualizer pathVisualizer;
+
+        IPathFinder _pathFinder;
+        IPathVisualizer _pathVisualizer;
 
         public void Initialize(IPathFinder finder, IPathVisualizer visualizer)
         {
-            pathFinder = finder;
-            pathVisualizer = visualizer;
+            _pathFinder = finder;
+            _pathVisualizer = visualizer;
+            Debug.Log($"UnitMover initialized in {gameObject.name} with finder={finder?.GetType().Name}, visualizer={(visualizer == null ? "null" : visualizer.GetType().Name)}");
+        }
+
+        private void Start()
+        {
+            var startCoord = HexGridManager.Instance.WorldToCube(transform.position);
+            var startTile = HexGridManager.Instance.GetTileAt(startCoord);
+
+            Debug.Log($"startCoord : {(startCoord == null ? "NULL" : startCoord)}");
+            Debug.Log($"startTile : {(startTile == null ? "NULL" : startTile)}");
+
+            if (startTile != null)
+            {
+                transform.position = startTile.transform.position;
+                Debug.Log($"¿Ø¥÷ Ω√¿€ ¡¬«• Ω∫≥¿: {startCoord}");
+            }
+            else
+            {
+                Debug.LogWarning($"¿Ø¥÷ Ω√¿€ ¡¬«•({startCoord})ø° «ÿ¥Á«œ¥¬ ≈∏¿œ¿Ã æ¯¿Ω!");
+            }
         }
 
         public void MoveTo(Vector3Int targetCoord)
         {
             var startCoord = HexGridManager.Instance.WorldToCube(transform.position);
-            var path = pathFinder.FindPath(startCoord, targetCoord);
+            var path = _pathFinder.FindPath(startCoord, targetCoord); // Null
+            Debug.Log($"MoveTo: start={startCoord}, target={targetCoord}, path={(path == null ? "NULL" : path.Count.ToString())}");
+
             if (path != null)
             {
-                pathVisualizer?.DrawPath(path);
+                _pathVisualizer?.DrawPath(path);
                 StopAllCoroutines();
                 StartCoroutine(FollowPath(path));
             }

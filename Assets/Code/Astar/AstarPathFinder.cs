@@ -6,7 +6,7 @@ namespace Code.Astar
 {
     public class AstarPathFinder : IPathFinder
     {
-        static readonly Vector3Int[] Directions =
+        static readonly Vector3Int[] Directions = new[]
         {
             new Vector3Int(1, -1, 0),
             new Vector3Int(1, 0, -1),
@@ -25,12 +25,20 @@ namespace Code.Astar
             var startTile = HexGridManager.Instance.GetTileAt(start);
             var goalTile = HexGridManager.Instance.GetTileAt(goal);
 
+            Debug.Log($"FindPath start={start} goal={goal}");
+            Debug.Log($"startTile={(startTile == null ? "NULL" : startTile.name)}");
+            Debug.Log($"goalTile={(goalTile == null ? "NULL" : goalTile.name)}");
+
+            if (startTile == null || goalTile == null)
+                return null;
+
             gScore[startTile] = 0;
             open.Enqueue(startTile, Heuristic(start, goal));
 
             while (open.Count > 0)
             {
                 var current = open.Dequeue();
+
                 if (current == goalTile)
                     return ReconstructPath(cameFrom, current);
 
@@ -38,17 +46,18 @@ namespace Code.Astar
                 {
                     var neighborCoord = current.CubeCoord + dir;
                     var neighbor = HexGridManager.Instance.GetTileAt(neighborCoord);
-                    if (neighbor == null || (!neighbor.IsWalkable && neighbor != goalTile))
-                        continue;
+                    if (neighbor == null || !neighbor.IsWalkable) continue;
 
                     int tentativeG = gScore[current] + 1;
                     if (!gScore.ContainsKey(neighbor) || tentativeG < gScore[neighbor])
                     {
                         cameFrom[neighbor] = current;
                         gScore[neighbor] = tentativeG;
-                        int fScore = tentativeG + Heuristic(neighbor.CubeCoord, goal);
                         if (!open.Contains(neighbor))
+                        {
+                            int fScore = tentativeG + Heuristic(neighbor.CubeCoord, goal);
                             open.Enqueue(neighbor, fScore);
+                        }
                     }
                 }
             }
