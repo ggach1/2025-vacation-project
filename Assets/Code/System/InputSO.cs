@@ -11,6 +11,9 @@ namespace Code.System
 
         public event Action LeftClickPressed;
         public event Action RightClickPressed;
+        public event Action RerollKeyPressed;
+        public event Action LvupKeyPressed;
+        public event Action SellKeyPressed;
 
         private void OnEnable()
         {
@@ -48,17 +51,20 @@ namespace Code.System
 
         public void OnLvUp(InputAction.CallbackContext context)
         {
-            throw new global::System.NotImplementedException();
+            if (context.performed)
+                LvupKeyPressed?.Invoke();
         }
 
         public void OnReroll(InputAction.CallbackContext context)
         {
-            throw new global::System.NotImplementedException();
+            if (context.performed)
+                RerollKeyPressed?.Invoke();
         }
 
         public void OnSell(InputAction.CallbackContext context)
         {
-            throw new global::System.NotImplementedException();
+            if (context.performed)
+                SellKeyPressed?.Invoke();
         }
 
         #endregion

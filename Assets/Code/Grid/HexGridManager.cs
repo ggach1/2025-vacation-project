@@ -1,110 +1,109 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Code.Grid
 {
+    [Serializable]
+    public class HexTileData
+    {
+        public Vector3Int coord;   // 큐브 좌표
+        public Vector3 worldPos;   // 유닛이 서야 할 월드 위치
+        public bool walkable;
+
+        public HexTileData(Vector3Int coord, Vector3 worldPos, bool walkable = true)
+        {
+            this.coord = coord;
+            this.worldPos = worldPos;
+            this.walkable = walkable;
+        }
+
+        public override string ToString() => $"HexTileData({coord}, {worldPos}, walkable={walkable})";
+    }
+
     public class HexGridManager : MonoBehaviour
     {
         public static HexGridManager Instance { get; private set; }
 
-        public Dictionary<Vector3Int, HexTile> tiles = new();
+        public Dictionary<Vector3Int, HexTileData> tiles = new();
 
-        float _radius;
+        [Header("Field & Tile Settings")]
+        [SerializeField] Transform field;
+        [SerializeField] float radius = 1.066f;
+        [SerializeField] Transform tileParent;
 
         private void Awake()
         {
-            if (Instance != null && Instance != this)
-                Destroy(gameObject);
+            if (Instance != null && Instance != this) Destroy(gameObject);
             else Instance = this;
+
+            GenerateTilesFromField();
         }
 
-        public void SetRadius(float radius)
+        /// <summary>Field(Plane) 크기 기반으로 가상 타일 좌표 생성</summary>
+        private void GenerateTilesFromField()
         {
-            _radius = radius;
+            tiles.Clear();
+            if (field == null) return;
+
+            // Unity Plane 기본 크기 10,10
+            float fieldWidth = field.localScale.x * 10f;
+            float fieldHeight = field.localScale.z * 10f;
+            Vector3 origin = field.position;
+
+            float hexWidth = Mathf.Sqrt(3f) * radius;
+            float hexHeight = 2f * radius;
+
+            int cols = Mathf.CeilToInt(fieldWidth / hexWidth);
+            int rows = Mathf.CeilToInt(fieldHeight / (hexHeight * 0.75f)); // 세로 1/4 겹침
+
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    float xOffset = (r % 2 == 0) ? 0f : hexWidth / 2f;
+                    float x = origin.x + c * hexWidth + xOffset - fieldWidth / 2f;
+                    float z = origin.z + r * (hexHeight * 0.75f) - fieldHeight / 2f;
+
+                    Vector3 worldPos = new Vector3(x, origin.y, z);
+                    Vector3Int cube = WorldToCube(worldPos);
+
+                    if (!tiles.ContainsKey(cube))
+                        tiles.Add(cube, new HexTileData(cube, worldPos, true));
+                }
+            }
+
+            Debug.Log($"[HexGridManager] 타일 {tiles.Count}개 생성");
         }
 
-        public void RegisterTile(HexTile tile)
-        {
-            tiles[tile.CubeCoord] = tile;
-        }
-
-        public HexTile GetTileAt(Vector3Int coord)
+        public HexTileData GetTileAt(Vector3Int coord)
         {
             tiles.TryGetValue(coord, out var tile);
-            Debug.Log($"tile : {(tile == null ? "NULL" : tile)}");
             return tile;
         }
 
-        /// <summary>
-        /// 월드 좌표를 큐브 좌표로 변환
-        /// </summary>
+        /// <summary>월드 좌표 → 큐브 좌표</summary>
         public Vector3Int WorldToCube(Vector3 worldPos)
         {
-            if (_radius <= 0)
-            {
-                Debug.LogError("HexGridManager: Radius not set! Call SetRadius before using WorldToCube.");
-                return Vector3Int.zero;
-            }
+            float q = (Mathf.Sqrt(3f) / 3f * worldPos.x - 1f / 3f * worldPos.z) / radius;
+            float r = (2f / 3f * worldPos.z) / radius;
 
-            Vector3 gridOrigin = HexGridManager.Instance.transform.position;
-            Vector3 pos = worldPos - gridOrigin;
+            float x = q, z = r, y = -x - z;
 
-            // Axial 좌표를 계산하고
-            float q = (Mathf.Sqrt(3f) / 3f * worldPos.x - 1f / 3f * worldPos.z);
-            float r = (2f / 3f * worldPos.z);
+            int rx = Mathf.RoundToInt(x);
+            int ry = Mathf.RoundToInt(y);
+            int rz = Mathf.RoundToInt(z);
 
-            // Axial 좌표를 큐브 좌표로 변환해준다
-            float x = q;
-            float z = r;
-            float y = -x - z;
-
-            // 가장 가까운 큐브 좌표를 반올림 해줘서
-            float rx = Mathf.RoundToInt(x);
-            float ry = Mathf.RoundToInt(y);
-            float rz = Mathf.RoundToInt(z);
-
-            // 반올림 오차를 보정해준다
             float xDiff = Mathf.Abs(rx - x);
             float yDiff = Mathf.Abs(ry - y);
             float zDiff = Mathf.Abs(rz - z);
 
-            if (xDiff > yDiff && xDiff > zDiff)
-                rx = -ry - rz;
-            else if (yDiff > zDiff)
-                ry = -rx - rz;
-            else
-                rz = -rx - ry;
+            if (xDiff > yDiff && xDiff > zDiff) rx = -ry - rz;
+            else if (yDiff > zDiff) ry = -rx - rz;
+            else rz = -rx - ry;
 
-            return new Vector3Int((int)rx, (int)ry, (int)rz);
+            return new Vector3Int(rx, ry, rz);
         }
-
-        //private Vector3Int AxialToCube(Vector2 axial)
-        //{
-        //    int x = Mathf.RoundToInt(axial.x);
-        //    int z = Mathf.RoundToInt(axial.y);
-        //    int y = -x - z;
-        //    return new Vector3Int(x, y, z);
-        //}
-
-        //private Vector3Int CubeRound(Vector3 cube)
-        //{
-        //    int rx = Mathf.RoundToInt(cube.x);
-        //    int ry = Mathf.RoundToInt(cube.y);
-        //    int rz = Mathf.RoundToInt(cube.z);
-
-        //    float xDiff = Mathf.Abs(rx - cube.x);
-        //    float yDiff = Mathf.Abs(ry - cube.y);
-        //    float zDiff = Mathf.Abs(rz - cube.z);
-
-        //    if (xDiff > yDiff && xDiff > zDiff)
-        //        rx = -ry - rz;
-        //    else if (yDiff > zDiff)
-        //        ry = -rx - rz;
-        //    else
-        //        rz = -rx - ry;
-
-        //    return new Vector3Int(rx, ry, rz);
-        //}
     }
 }
 

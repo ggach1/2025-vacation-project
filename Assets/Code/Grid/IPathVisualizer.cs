@@ -5,6 +5,6 @@ namespace Code.Grid
 {
     public interface IPathVisualizer
     {
-        void DrawPath(List<HexTile> path);
+        void DrawPath(List<HexTileData> path);
     }
 }

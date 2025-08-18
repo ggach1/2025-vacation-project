@@ -24,14 +24,12 @@ namespace Code.Grid
 
             float radius = Mathf.Min(maxRadiusByWidth, maxRadiusByHeight) * 0.95f;
 
-            HexGridManager.Instance.SetRadius(radius);
-
             float xStep = radius * Mathf.Sqrt(3f);
             float zStep = radius * 1.5f;
 
             float totalWidth = (_cols - 1) * xStep + xStep;
             if (_rows > 1)
-                totalWidth += xStep / 2f; // 오른쪽 오프셋 고려해야해
+                totalWidth += xStep / 2f; // 오른쪽 오프셋 고려해줘야함
 
             float totalHeight = (_rows - 1) * zStep + zStep;
 
@@ -67,8 +65,6 @@ namespace Code.Grid
                     var tiles = tileObj.AddComponent<HexTile>();
                     tiles.CubeCoord = cubeCoord;
                     tiles.IsWalkable = true;
-
-                    HexGridManager.Instance.RegisterTile(tiles);
                 }
             }
         }

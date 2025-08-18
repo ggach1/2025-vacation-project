@@ -9,85 +9,46 @@ namespace Code.System
         [field: SerializeField] public InputSO InputSO { get; private set; }
 
         [SerializeField] LayerMask unitLayer;
-        [SerializeField] LayerMask enemyLayer;
-        [SerializeField] LayerMask tileLayer;
+        [SerializeField] LayerMask fieldLayer;
 
+        GameObject _selectedUnit;
         UnitController _selectedUnitController;
 
         private void OnEnable()
         {
-            if (InputSO == null)
-            {
-                Debug.LogError("Input SO 없다");
-                return;
-            }
-
             InputSO.LeftClickPressed += LeftClicked;
             InputSO.RightClickPressed += RightClicked;
         }
-
         private void OnDisable()
         {
-            if (InputSO == null) return;
             InputSO.LeftClickPressed -= LeftClicked;
             InputSO.RightClickPressed -= RightClicked;
         }
 
         private void LeftClicked()
         {
-            if (Camera.main == null)
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            // 1) 유닛 선택
+            if (Physics.Raycast(ray, out var hit, 100f, unitLayer))
             {
-                Debug.LogError("카메라 없다");
+                _selectedUnit = hit.collider.gameObject;
+                _selectedUnitController = _selectedUnit.GetComponent<UnitController>();
+                Debug.Log($"Unit Selected : {_selectedUnit.name}");
                 return;
             }
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            // 1) 유닛 클릭 -> 선택 
-            if (Physics.Raycast(ray, out RaycastHit hitUnit, 100f, unitLayer))
+            // 2) 선택된 유닛이 있고, 필드를 클릭 → 좌표 구해 이동
+            if (_selectedUnitController != null && Physics.Raycast(ray, out hit, 100f, fieldLayer))
             {
-                var ctrl = hitUnit.collider.GetComponentInParent<UnitController>();
-                if (ctrl != null)
-                {
-                    _selectedUnitController = ctrl;
-                    Debug.Log($"유닛 선택: {ctrl.gameObject.name}");
-                }
-                else
-                {
-                    Debug.LogWarning("부모에게서 UnitController를 찾을 수 없음");
-                }
-                return;
-            }
-
-            // 2) 선택된 유닛이 있고 타일 클릭했으면 A* 이동 명령 전달
-            if (_selectedUnitController != null && Physics.Raycast(ray, out RaycastHit hitTile, 100f, tileLayer))
-            {
-                var tile = hitTile.collider.GetComponent<HexTile>() ?? hitTile.collider.GetComponentInParent<HexTile>();
-                if (tile != null)
-                {
-                    _selectedUnitController.MoveToTileCoord(tile.CubeCoord);
-                    Debug.Log($"유닛 이동 {tile.name} ({tile.CubeCoord})");
-                }
-                else
-                {
-                    Debug.LogWarning("HexTile Compo를 찾을 수 없다");
-                }
+                var coord = HexGridManager.Instance.WorldToCube(hit.point);
+                _selectedUnitController.MoveToTileCoord(coord);
             }
         }
 
         private void RightClicked()
         {
-            if (_selectedUnitController == null) return;
-
-            if (Camera.main == null) return;
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hitEnemy, 100f, enemyLayer))
-            {
-                var enemyTf = hitEnemy.collider.transform;
-                _selectedUnitController.MoveToEnemyTransform(enemyTf);
-                Debug.Log($"Command: Move selected unit to enemy {enemyTf.name}");
-            }
+            // 추후 UI/정보 표시 로직
         }
     }
 }
