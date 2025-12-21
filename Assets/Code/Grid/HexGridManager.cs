@@ -37,6 +37,12 @@ namespace Code.Grid
             if (Instance != null && Instance != this) Destroy(gameObject);
             else Instance = this;
 
+            if (tileParent == null)
+            {
+                var parentObj = new GameObject("HexTiles");
+                tileParent = parentObj.transform;
+            }
+
             GenerateTilesFromField();
         }
 
