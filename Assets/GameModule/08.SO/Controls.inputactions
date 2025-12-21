@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "Controls",
     "maps": [
         {
@@ -6,45 +7,9 @@
             "id": "df70fa95-8a34-4494-b137-73ab6b9c7d37",
             "actions": [
                 {
-                    "name": "Interact",
+                    "name": "Move",
                     "type": "Button",
-                    "id": "7c5642ad-335d-4134-a364-029fe70bb6b3",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "ShowInformation",
-                    "type": "Button",
-                    "id": "bf78abae-0eda-417b-96ad-946b3ba6fabd",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Reroll",
-                    "type": "Button",
-                    "id": "5620fbfb-3dad-4502-b38c-19376b3add02",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Sell",
-                    "type": "Button",
-                    "id": "4c3d0dc4-afa2-4e0e-961d-a5dd88420d48",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "LvUp",
-                    "type": "Button",
-                    "id": "37683eb1-cdd6-4fc0-9163-f0b8cd5e94e6",
+                    "id": "d79727c5-f16b-4e84-9d27-76aed7493388",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -54,56 +19,45 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "63c7d03d-0a84-4767-9844-8d48b66472c2",
-                    "path": "<Mouse>/leftButton",
+                    "id": "af1edb65-1432-47a3-9091-5c9d7b2bf43e",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Interact",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "49d39996-626f-487b-8247-ef46123654c5",
-                    "path": "<Mouse>/rightButton",
+                    "id": "d0c1efad-c286-47ba-afd4-1ac44967c4f0",
+                    "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ShowInformation",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "b80097b6-5b09-4546-a4d3-9c2285b9b699",
+                    "id": "4a6119c0-b258-4058-8fa6-673f65bd2aa4",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4f515b75-8a3f-4cb0-abcb-7e278340e99d",
                     "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Reroll",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "910a9c7e-88ca-47de-ac78-3c7b4b7848c4",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Sell",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "9df12593-d67b-43b1-9a68-7d6bfa856761",
-                    "path": "<Keyboard>/f",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "LvUp",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
