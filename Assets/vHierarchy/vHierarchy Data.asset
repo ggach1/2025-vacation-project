@@ -16,4 +16,6 @@ MonoBehaviour:
     keys: []
     values: []
   bookmarks: []
-  bookmarkedScenePaths: []
+  bookmarkedScenePaths:
+  - Assets/Scenes/8Exit.unity
+  - Assets/Scenes/GameScene.unity
