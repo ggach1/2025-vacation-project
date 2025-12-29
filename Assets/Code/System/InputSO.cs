@@ -7,6 +7,8 @@ namespace Code.System
     [CreateAssetMenu(fileName = "Input", menuName = "SO/Input")]
     public class InputSO : ScriptableObject, Controls.IPlayerActions
     {
+        public Vector3 MovementKey { get; private set; }
+
         Controls _controls;
 
         private void OnEnable()
@@ -27,7 +29,7 @@ namespace Code.System
 
         public void OnMove(InputAction.CallbackContext context)
         {
-            Vector2 mouseVec = context.ReadValue<Vector2>();
+            MovementKey = context.ReadValue<Vector2>();
         }
     }
 }
