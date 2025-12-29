@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Code.Player
+namespace Code.Bocchi
 {
     public class Player : MonoBehaviour
     {
