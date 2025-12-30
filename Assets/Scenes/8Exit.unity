@@ -450,7 +450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61403d1cc48605f4c92bbfc6bef12d01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bocchiCamera: {fileID: 0}
+  bocchiCamera: {fileID: 1918714489}
 --- !u!1 &728420760
 GameObject:
   m_ObjectHideFlags: 0
