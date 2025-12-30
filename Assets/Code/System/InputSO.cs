@@ -8,6 +8,7 @@ namespace Code.System
     public class InputSO : ScriptableObject, Controls.IPlayerActions
     {
         public Vector3 MovementKey { get; private set; }
+        public Vector3 MousePosition { get; private set; }
 
         Controls _controls;
 
@@ -30,6 +31,11 @@ namespace Code.System
         public void OnMove(InputAction.CallbackContext context)
         {
             MovementKey = context.ReadValue<Vector2>();
+        }
+
+        public void OnMouse(InputAction.CallbackContext context)
+        {
+            MousePosition = context.ReadValue<Vector2>();
         }
     }
 }
